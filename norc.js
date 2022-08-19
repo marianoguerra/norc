@@ -539,6 +539,7 @@ class Scheduler {
 export {
   parse,
   Scheduler,
+  ScheduleJob,
   TaskFn,
   Result,
   Constant,
