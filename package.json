@@ -1,0 +1,15 @@
+{
+  "name": "norc",
+  "version": "1.0.0",
+  "description": "Yet another cron-ish job scheduler for Deno and the browser",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mariano Guerra",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.22.0",
+    "prettier": "^2.7.1"
+  }
+}
