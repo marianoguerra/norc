@@ -101,9 +101,11 @@ Deno.test('norc', () => {
   );
 });
 
-function isSameCron(a, e) {
-  const {result, error} = a;
+function isSameCron(expr, fn) {
+  const {result, error} = parse(expr),
+    e = fn(expr);
   assertEquals(error, null);
+  assertEquals(result.raw, expr);
   assert(result.isEqual(e));
 }
 
@@ -131,70 +133,72 @@ Deno.test('norc.parse', () => {
   }
 
   isSameCron(
-    parse('* * * * * *'),
-    new CronMatcher(w(), w(), w(), w(), w(), w())
+    '* * * * * *',
+    raw => new CronMatcher(w(), w(), w(), w(), w(), w(), raw)
   );
 
   isSameCron(
-    parse('9 * * * * *'),
-    new CronMatcher(c(9), w(), w(), w(), w(), w())
+    '9 * * * * *',
+    raw => new CronMatcher(c(9), w(), w(), w(), w(), w(), raw)
   );
 
   isSameCron(
-    parse('1 2 3 4 5 6'),
-    new CronMatcher(c(1), c(2), c(3), c(4), c(5), c(6))
+    '1 2 3 4 5 6',
+    raw => new CronMatcher(c(1), c(2), c(3), c(4), c(5), c(6), raw)
   );
 
   isSameCron(
-    parse('1-5 * * * * *'),
-    new CronMatcher(r(1, 5), w(), w(), w(), w(), w())
+    '1-5 * * * * *',
+    raw => new CronMatcher(r(1, 5), w(), w(), w(), w(), w(), raw)
   );
 
   isSameCron(
-    parse('1-5/2 * * * * *'),
-    new CronMatcher(i(r(1, 5), 2), w(), w(), w(), w(), w())
+    '1-5/2 * * * * *',
+    raw => new CronMatcher(i(r(1, 5), 2), w(), w(), w(), w(), w(), raw)
   );
 
   isSameCron(
-    parse('1,3,5 * * * * *'),
-    new CronMatcher(s(c(1), c(3), c(5)), w(), w(), w(), w(), w())
+    '1,3,5 * * * * *',
+    raw => new CronMatcher(s(c(1), c(3), c(5)), w(), w(), w(), w(), w(), raw)
   );
   isSameCron(
-    parse('1,2-5,*/5,1/6,1-6/3 * * * * *'),
-    new CronMatcher(
-      s(c(1), r(2, 5), i(w(), 5), i(c(1), 6), i(r(1, 6), 3)),
-      w(),
-      w(),
-      w(),
-      w(),
-      w()
-    )
+    '1,2-5,*/5,1/6,1-6/3 * * * * *',
+    raw =>
+      new CronMatcher(
+        s(c(1), r(2, 5), i(w(), 5), i(c(1), 6), i(r(1, 6), 3)),
+        w(),
+        w(),
+        w(),
+        w(),
+        w(),
+        raw
+      )
   );
 
   Object.entries(MONTH_TO_NUM).forEach(([month, number]) => {
     const expr = `* * * * ${month} *`;
     isSameCron(
-      parse(expr),
-      new CronMatcher(w(), w(), w(), w(), c(number), w())
+      expr,
+      raw => new CronMatcher(w(), w(), w(), w(), c(number), w(), raw)
     );
   });
 
   Object.entries(DAY_OF_WEEK_TO_NUM).forEach(([day, number]) => {
     const expr = `* * * * * ${day}`;
     isSameCron(
-      parse(expr),
-      new CronMatcher(w(), w(), w(), w(), w(), c(number))
+      expr,
+      raw => new CronMatcher(w(), w(), w(), w(), w(), c(number), raw)
     );
   });
 
   isSameCron(
-    parse('* * * * * 7'),
-    new CronMatcher(w(), w(), w(), w(), w(), c(0))
+    '* * * * * 7',
+    raw => new CronMatcher(w(), w(), w(), w(), w(), c(0), raw)
   );
 
   isSameCron(
-    parse('* * * * * SUN'),
-    new CronMatcher(w(), w(), w(), w(), w(), c(0))
+    '* * * * * SUN',
+    raw => new CronMatcher(w(), w(), w(), w(), w(), c(0), raw)
   );
 
   isError('* * * * *', '6 values required');

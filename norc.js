@@ -276,13 +276,15 @@ function parse(s) {
     hoursM,
     dayOfMonthM,
     monthM,
-    dayOfWeekM
+    dayOfWeekM,
+    s
   );
   return Result.ok(result);
 }
 
 class CronMatcher {
-  constructor(seconds, minutes, hours, daysOfMonth, months, daysOfWeek) {
+  constructor(seconds, minutes, hours, daysOfMonth, months, daysOfWeek, raw) {
+    this.raw = raw;
     this.seconds = seconds;
     this.minutes = minutes;
     this.hours = hours;
