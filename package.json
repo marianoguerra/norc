@@ -1,6 +1,6 @@
 {
   "name": "norc",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Yet another cron-ish job scheduler for Deno and the browser",
   "main": "index.js",
   "scripts": {
